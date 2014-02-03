@@ -1,0 +1,23 @@
+# some obvious ones
+*.o
+*.exe
+*.elf
+*.bin
+*.hex
+*.out
+
+# make clean removes this directory but it's probably good to leave this anyway
+bin/**
+
+# note to self: the difference between bin/ and bin/** is that bin/ ignores
+# the directory and subpaths, where as bin/** only ignores the subpaths.
+# since git generally ignores empty directories altogether, there is only one
+# subtle case where this matters: if you try to unignore a subpath of bin,
+# bin/ will ignore the unignore, where as bin/** respects it. more on this:
+# http://stackoverflow.com/a/20391855
+
+# this utility attaches the crc checksum to the end of a compiled
+# elf binary
+# there's a make target for it if it's not there, since it's a binary
+# it should be ignored
+tools/lpcrc/lpcrc
