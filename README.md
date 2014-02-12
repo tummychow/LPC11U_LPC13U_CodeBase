@@ -1,68 +1,33 @@
-# LPC11U/LPC13U Code Base #
+# ARM ALARM #
 
-This code base is an attempt at providing a reasonably well-organized, open-source starting point for projects based on the LPC11Uxx and LPC13Uxx family of MCUs.
+A project to create a better alarm clock and learn some ARM Cortex-M3 development in the process.
 
-## Key Features ##
+## FEATURES ##
+- the brain is a powerful ARM Cortex-M3 microcontroller ([NXP LPC1347 in LQFP48](http://www.nxp.com/pip/LPC1347FBD48.html)) which significantly outweighs the average Arduino. I wasn't sure I could do the GUI on an AVR and I don't have much background tying me to that platform, so I figured it was safer to just target a bigger micro.
+- sexy touchscreen interface. I'm working with the [Adafruit 2.8" touch TFT](http://adafru.it/376) which has an ILI9325 controller and an exposed 4-wire resistive touchscreen, which I'm controlling with a TI TSC2007.
+- high-precision real time clock - an [NXP PCF2129AT](http://www.nxp.com/pip/PCF2129AT.html), which has an integrated TCXO. The existence of the [ChronoDot](http://macetech.com/store/index.php?main_page=product_info&cPath=5&products_id=8) seems to make the Maxim DS3231 more popular (plus the DS3231 is software-compatible with Maxim's popular DS1307), but the code base already supports the NXP part, and it's also half as expensive.
+- loud. The alarm sound comes from a buzzer, possibly multiple buzzers. If I was going to settle for speakers, I'd just use my phone.
+- standard Sick of Beige case ([DP10080](http://dangerousprototypes.com/docs/Sick_of_Beige_compatible_cases)). The case will probably be overkill for the PCB size, but it has to be pretty big because the TFT sits on its face.
+- various cool software things that I haven't delivered on yet (but plan to eventually)
 
-It includes the following key features, which can be easily enabled or disabled via a single board-specific config file:
+Schematic is on the way in a future commit (I have drafts), but I haven't tested anything yet, so it probably doesn't work. I've got nothing for PCB layout so far, since I don't even know if the schematic works yet. They're in EAGLE 6.5.0 - sorry to KiCAD users. I actually used KiCAD on a school project and might port the schematic there in the future.
 
-- [USB CDC, HID and MSC support](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/src/core/usb), including HID Keyboard and HID Mouse emulation, with any combination of devices possible up to the number of end points available on the MCU
-- Easy to extend [command-line interface](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/src/cli) (CLI) with USB CDC and UART support
-- [Sensor abstraction layer](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/src/drivers/sensors) where all sensors return a common descriptor and data type using standardized SI units
-- Basic [localisation support](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/src/localisation), allowing multiple languages to be used in the same application
-- Graphics sub-system including support for multiple font types (bitmap or anti-aliased), basic drawing functions, and a simple HW abstraction mechanism
-- FAT16/32 file system support for SD cards including the option to use long names (via FatFS)
-- Numerous wireless stacks, including NFC (based on the PN532) and 802.15.4 (based on the AT86RF212).
-- A basic [unit testing framework](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/tests_host) suitable for embedded systems (Unity)
+## STRUCTURE ##
+This project is based on a [codebase](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase) by [microbuilder.eu](http://github.com/microbuilder). I've left the `master` and `development` branches of the original repo intact and I won't be doing any work on them, unless I develop something useful that justifies opening a pull request.
 
-## Supported MCUs ##
-  
-This code base is designed to work transparently with the following MCUs, allowing you to select the MCU with the right price/performance/size ratio for your project without having to rewrite any underlying code:
+My development will take place on the `arm-alarm` branch. I only change the stuff I use, so most of the original code and documentation persists. Any of my dev/feature branches will be prefixed with `aa-` (for example `aa-buzzertest`), so that they don't overlap with the original branches.
 
-- **LPC1347** - ARM Cortex M3, 72MHz, 64KB Flash, 8+2+2KB SRAM, 4KB EEPROM
-- **LPC11U37** - ARM Cortex M0, 50MHz, 128KB Flash, 8+2KB SRAM, 4KB EEPROM
-- **LPC11U24** - ARM Cortex M0, 50MHa, 32KB Flash, 8+2KB SRAM, 4KB EEPROM
+The [GitHub page](http://tummychow.github.io/arm-alarm) for the repository serves as a dev blog, so if you really want to know about my progress, you can follow along there. That Jekyll theme is [Lanyon](http://github.com/poole/lanyon) by [Mark Otto](http://github.com/mdo), plus some personal changes from [my fork](http://github.com/tummychow/lanyon).
 
-## Multiple Board Support ##
+## BUILDING ##
+I'm working with GCC ARM Embedded on a 32-bit Arch Linux virtual machine (installed from the [AUR](http://aur.archlinux.org/packages/gcc-arm-none-eabi/)), so my toolchain is basically the [Makefile](http://github.com/tummychow/arm-alarm/blob/arm-alarm/Makefile) inherited from the original codebase. Refer to the [original documentation](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase/blob/master/doc/toolchain_make.md) for how to use and modify it. Assuming you have everything set up right, `make all` should produce a usable binary. Unless my code is broken, in which case hopefully I'll know.
 
-In an attempt to make the code base relevant in a variety of situations, there is a basic [board abstraction layer](https://github.com/microbuilder/LPC11U_LPC13U_Codebase/tree/master/src/boards), and all config settings are board-specific.
+The board I'm developing for is custom, but in the development process, I'm breadboarding with an LPCXpresso LPC1347 devboard. For $30 with an onboard debugger, you really can't beat the price (unless you use an ST Discovery board - in which case [this](http://github.com/andysworkshop/stm32plus) might help). One caveat you should be aware of, if you intend to use the Makefile for your development like I did, is that the debugger on those boards is closed-source, and to my knowledge, only compatible with one debugging solution (the LPCXpresso IDE, which is free as in beer, but requires registration). You'll have to use the LPCXpresso IDE if you want to use that debugger, even if you aren't developing in that environment.
 
-The target board in indicated in the shared **projectconfig.h** file, which in turn  references the board-specific config and initialization code in the **'boards/'** subfolder.
+Since I'm not programming in LPCXpresso and I don't have any other debug hardware, for now I upload the binaries using [Flash Magic](http://www.flashmagictool.com/). A good old FTDI serial adapter will get the job done. The `firmware.hex` binary is the one you want. The LPC1347 also has a ROM bootloader which makes it look like a mass storage device, and you can copy a binary onto it to program the micro. If you do this, you want the `firmware.bin` binary. I believe the Makefile has a `flash` target which does the copying-over; you can program it that way as well.
 
-## Supported IDEs/Toolchains ##
+## CONTRIBUTING ##
+I'll cross this bridge when I get to it. But let me say that this project was designed for my very specific alarm-clock-oriented needs, so I doubt it'll be of great interest to others.
 
-The code base contains a few dependencies on GCC extensions (notably in the localisation system), and has not been tested with any non-GCC toolchain.
-
-At the moment the following IDEs are supported by the code base, and this list may be extended in the future:
-
-**GCC/Makefile ('Makefile')**
-
-The codebase includes startup code, linker scripts and a makefile to build this codebase with the cross-platform, open-source GNU/GCC toolset.  This gives you the most control over how your project is built, and allows you to build your project on any platform with support for GCC and make (*NIX, Mac OSX, Windows, etc.). [(more)](doc/toolchain_make.md)
-
-**LPCXpresso / Code Red IDE (.cproject/.project)**
-
-LPCXpresso is a free of charge Eclipse-based IDE based around GCC.  It's based on Code Red's commercial Red Suite IDE, but is provided free of charge by NXP Semiconductors with a debug limit up to 128Kb (you can, however, compile projects larger than this), which is within the limits of all of the chips supported by this code base.  
-
-Inexpensive LPCXpresso development boards are available with integrated SWD debuggers that can be seperated from the MCU part of the board and used to debug any supported MCU or device. [(more)](doc/toolchain_lpcxpresso.md)
-
-**Crossworks for ARM (CW\_*.hzp)**
-
-Project files are also provided for Rowley Associate's popular Crossworks for ARM IDE, which is GCC based, includes an optimised standard C library, and supports a large variety of HW debuggers (including the popular J-Link from Segger). [(more)](doc/toolchain_crossworks.md)
-
-## Current Development Status ##
-
-This code base is still in active development, and there are almost certainly a number of improvements that can be made to it, bugs that will need to be worked out, and pieces of code that could be better organized or rewritten entirely.
-
-The current localisation system is quite unsatisfactory, for example, but the decision was made to keep in in the code base in the hopes that other people will propose improvements to it, as well as to other parts of this code base.
-
-Until an initial public release is made (version 1.0), the code base should be considered unstable and some reorganisation will almost certainly continue to take place in different parts of the code.  
-
-The current code has a good overall structure, but there are still many parts that can be streamlined or reorganized (for example, reworking the UART buffer to use src/core/fifo.c instead of the older buffer from a previous code base).
-
-## How Can I Help? ##
-
-Quite a bit of time, effort and money has gone into producing this open source code base in the sole hope that it will make things easier for other people to get started with this well-rounded MCU family.  If you find the code base useful as is, the best thanks you can give is to contribute something useful back to it, and improve the current code base so that other people can learn from your efforts as well.
-
-## License ##
-
-Where possible, all code is provided under a BSD style license, but each file is individually licensed and you should ensure that you fully understand the license terms and limitations of any files you use in your project.
+## LICENSE ##
+My code is licensed under the BSD 3-clause license. Schematic license TBD. Refer to the original [README.md](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase/blob/master/README.md) for the licensing terms of the underlying code base (most of which is also BSD 3-clause, but as that readme stipulates, licensing is on a file-by-file basis).
