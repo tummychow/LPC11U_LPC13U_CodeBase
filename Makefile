@@ -190,9 +190,10 @@ OBJS  += $(OBJ_PATH)/verdana14.o
 OBJS  += $(OBJ_PATH)/verdanabold14.o
 
 VPATH += src/drivers/displays/graphic/hw
-OBJS  += $(OBJ_PATH)/ili9340.o
+# OBJS  += $(OBJ_PATH)/ili9340.o
 # OBJS  += $(OBJ_PATH)/hx8340b.o
 # OBJS  += $(OBJ_PATH)/hx8347g.o
+OBJS += $(OBJ_PATH)/ili9325.o
 
 VPATH += src/drivers/displays/segment/ht16k33
 OBJS  += $(OBJ_PATH)/ht16k33.o
