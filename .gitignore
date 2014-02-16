@@ -1,0 +1,5 @@
+# ignore jekyll products
+_site/**
+
+# ignore drafts (versioned locally in separate repo)
+_drafts/**

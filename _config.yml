@@ -1,0 +1,22 @@
+# Dependencies
+markdown:         redcarpet
+pygments:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            ARM Alarm
+tagline:          'A better alarm clock.'
+description:      'A better alarm clock.'
+url:              http://tummychow.github.io
+baseurl:          /arm-alarm
+
+author:
+  name:           'Stephen Jung'
+  url:            http://github.com/tummychow
+
+paginate:         1
+
+github:
+  repo:           https://github.com/tummychow/arm-alarm
