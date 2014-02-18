@@ -13,20 +13,21 @@
 
     {% comment %}
       The code below dynamically generates a sidebar nav of pages with
-      `layout: page` in the front-matter. See readme for usage.
+      `layout: page` in the front-matter. Pages will be ordered by the
+      single-digit `pageprio` specified in the front matter. Pages without
+      a pageprio will not be shown in the sidebar.
+      http://stackoverflow.com/a/9126294/3274401
     {% endcomment %}
 
-    {% assign pages_list = site.pages %}
-    {% for node in pages_list %}
-      {% if node.title != null %}
-        {% if node.layout == "page" %}
-          <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ site.baseurl }}{{ node.url }}">{{ node.title }}</a>
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+    {% for prio in (0..9) %}{% for node in site.pages %}
+      {% if node.title != null %}{% if node.layout == "page" %}{% if prio == node.pageprio %}
+        <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ site.baseurl }}{{ node.url }}">{{ node.title }}</a>
+      {% endif %}{% endif %}{% endif %}
+    {% endfor %}{% endfor %}
 
-    <a class="sidebar-nav-item" href="{{ site.github.repo }}/archive/arm-alarm.zip">Download</a>
+    <a class="sidebar-nav-item" href="{{ site.github.repo }}/archive/{{ site.github.version }}.zip">Download</a>
     <a class="sidebar-nav-item" href="{{ site.github.repo }}">GitHub project</a>
+    <span class="sidebar-nav-item">Currently on {{ site.github.version }}</span>
   </nav>
 
   <div class="sidebar-item">

@@ -543,3 +543,9 @@ a.pagination-item:hover {
 .theme-base-0f .related-posts li a:hover {
   color: #8f5536;
 }
+
+/* simple css class to make undecorated links */
+a.undeclink {
+    text-decoration: none;
+    color: inherit;
+}

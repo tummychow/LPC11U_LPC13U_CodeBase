@@ -1,6 +1,7 @@
 ---
 layout: page
 title: About
+pageprio: 3
 ---
 
 **ARM ALARM** is a project to create a better alarm clock. This is the project development blog. If you're desperately interested in my progress, you've come to the right place.

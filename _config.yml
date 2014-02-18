@@ -16,7 +16,8 @@ author:
   name:           'Stephen Jung'
   url:            http://github.com/tummychow
 
-paginate:         1
+paginate:         5
 
 github:
   repo:           https://github.com/tummychow/arm-alarm
+  version:        arm-alarm
