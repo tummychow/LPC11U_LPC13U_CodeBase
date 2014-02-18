@@ -10,7 +10,7 @@ A project to create a better alarm clock and learn some ARM Cortex-M3 developmen
 - standard Sick of Beige case ([DP10080](http://dangerousprototypes.com/docs/Sick_of_Beige_compatible_cases)). The case will probably be overkill for the PCB size, but it has to be pretty big because the TFT sits on its face.
 - various cool software things that I haven't delivered on yet (but plan to eventually)
 
-Schematic is on the way in a future commit (I have drafts), but I haven't tested anything yet, so it probably doesn't work. I've got nothing for PCB layout so far, since I don't even know if the schematic works yet. They're in EAGLE 6.5.0 - sorry to KiCAD users. I actually used KiCAD on a school project and might port the schematic there in the future.
+The schematics are [here](http://github.com/tummychow/arm-alarm/tree/arm-alarm/sch), but the main board schematic is not even vaguely ready to be manufactured, so I'm not going to release it yet. They're in EAGLE 6.5.0 - sorry to KiCAD users. I actually used KiCAD on a school project and might port the schematic there in the future. In the meantime, gerbers and PNG exports are also included for non-EAGLE users.
 
 ## STRUCTURE ##
 This project is based on a [codebase](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase) by [microbuilder.eu](http://github.com/microbuilder). I've left the `master` and `development` branches of the original repo intact and I won't be doing any work on them, unless I develop something useful that justifies opening a pull request.
@@ -30,4 +30,4 @@ Since I'm not programming in LPCXpresso and I don't have any other debug hardwar
 I'll cross this bridge when I get to it. But let me say that this project was designed for my very specific alarm-clock-oriented needs, so I doubt it'll be of great interest to others.
 
 ## LICENSE ##
-My code is licensed under the BSD 3-clause license. Schematic license TBD. Refer to the original [README.md](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase/blob/master/README.md) for the licensing terms of the underlying code base (most of which is also BSD 3-clause, but as that readme stipulates, licensing is on a file-by-file basis).
+My code and schematics are under the [BSD 3-clause license](https://github.com/tummychow/arm-alarm/blob/arm-alarm/License.txt) Refer to the original [README.md](http://github.com/microbuilder/LPC11U_LPC13U_CodeBase/blob/master/README.md) for the licensing terms of the underlying code base (most of which is also BSD 3-clause, but as that readme stipulates, licensing is on a file-by-file basis).
