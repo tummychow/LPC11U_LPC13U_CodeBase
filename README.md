@@ -7,7 +7,7 @@ A project to create a better alarm clock and learn some ARM Cortex-M3 developmen
 - sexy touchscreen interface. I'm working with the [Adafruit 2.8" touch TFT](http://adafru.it/376) which has an ILI9325 controller and an exposed 4-wire resistive touchscreen, which I'm controlling with a TI TSC2007.
 - high-precision real time clock - an [NXP PCF2129AT](http://www.nxp.com/pip/PCF2129AT.html), which has an integrated TCXO. The existence of the [ChronoDot](http://macetech.com/store/index.php?main_page=product_info&cPath=5&products_id=8) seems to make the Maxim DS3231 more popular (plus the DS3231 is software-compatible with Maxim's popular DS1307), but the code base already supports the NXP part, and it's also half as expensive.
 - loud. The alarm sound comes from a buzzer, possibly multiple buzzers. If I was going to settle for speakers, I'd just use my phone.
-- standard Sick of Beige case ([DP10080](http://dangerousprototypes.com/docs/Sick_of_Beige_compatible_cases)). The case will probably be overkill for the PCB size, but it has to be pretty big because the TFT sits on its face.
+- [Sick-of-Beige](http://dangerousprototypes.com/docs/Sick_of_Beige_compatible_cases)-style case. Not a standard Sick of Beige size, for cost reasons, but it has the same design.
 - various cool software things that I haven't delivered on yet (but plan to eventually)
 
 The schematics are [here](http://github.com/tummychow/arm-alarm/tree/arm-alarm/sch), but the main board schematic is not even vaguely ready to be manufactured, so I'm not going to release it yet. They're in EAGLE 6.5.0 - sorry to KiCAD users. I actually used KiCAD on a school project and might port the schematic there in the future. In the meantime, gerbers and PNG exports are also included for non-EAGLE users.
