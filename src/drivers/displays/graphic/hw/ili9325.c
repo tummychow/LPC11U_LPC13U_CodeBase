@@ -168,20 +168,16 @@ void ili9325WriteRegister(uint8_t command, uint16_t data)
 {
     // Write command
     CLR_CS_CD_SET_RD_WR;
-    // This won't work since it will only set the 1 bits and leave 0's as is
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
 
     // Write data
-    // i have extended this to 16 bits for lpc1343-codebase compatibility
-    // i can see several instances where 16 bits of data are being written
-    // so for now i'm going to assume those extra 8 bits are mandatory
     SET_CD;
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
 }
@@ -196,7 +192,7 @@ void ili9325WriteCommand(const uint8_t command)
     // Send command
     CLR_CS_CD_SET_RD_WR;
     // This won't work since it will only set the 1 bits and leave 0's as is
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
 }
@@ -211,11 +207,11 @@ void ili9325WriteData(const uint16_t data)
     // Send data
     CLR_CS_SET_CD_RD_WR;
     // This won't work since it will only set the 1 bits and leave 0's as is
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
     // This won't work since it will only set the 1 bits and leave 0's as is
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
 }
@@ -232,7 +228,7 @@ uint16_t ili9325ReadRegister(uint8_t command)
     // Send command
     CLR_CS_CD_SET_RD_WR;
     // This won't work since it will only set the 1 bits and leave 0's as is
-    LPC_GPIO->SET[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
+    LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
 
@@ -244,7 +240,7 @@ uint16_t ili9325ReadRegister(uint8_t command)
     CLR_RD;
     ili9325Delay(10);
     // This won't work since it will only set the 1 bits and leave 0's as is
-    d = (((LPC_GPIO->SET[ILI9325_DATA_PORT]) & ILI9325_DATA_MASK) >> ILI9325_DATA_OFFSET);
+    d = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     SET_RD;
     SET_CS;
 
@@ -271,15 +267,13 @@ uint16_t ili9325ReadData(void)
     CLR_RD;
     ili9325Delay(10);
     // This won't work since it will only set the 1 bits and leave 0's as is
-    high = ((LPC_GPIO->SET[ILI9325_DATA_PORT]) & ILI9325_DATA_MASK);
-    high >>= ILI9325_DATA_OFFSET;
+    high = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("high: 0x%02X\r\n", high);
     SET_RD;
     CLR_RD;
     ili9325Delay(10);
     // This won't work since it will only set the 1 bits and leave 0's as is
-    low = ((LPC_GPIO->SET[ILI9325_DATA_PORT]) & ILI9325_DATA_MASK);
-    low >>= ILI9325_DATA_OFFSET;
+    low = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("low: 0x%02X\r\n", low);
     SET_RD;
     SET_CS;
@@ -390,6 +384,8 @@ void lcdInit(void)
 
     // Set data port pins to output
     ILI9325_GPIO2DATA_SETOUTPUT;
+    // set up GPIO masking for data port - EXPERIMENTAL
+    LPC_GPIO->MASK[ILI9325_DATA_PORT] = ~ILI9325_DATA_MASK;
 
     // Set backlight pin to output and turn it on
     LPC_GPIO->DIR[ILI9325_BL_PORT] |= (1 << ILI9325_BL_PIN);
