@@ -389,7 +389,7 @@ void lcdInit(void)
     LPC_GPIO->DIR[ILI9325_CONTROL_PORT] |= (1 << ILI9325_RD_PIN);
 
     // Set data port pins to output
-    LPC_GPIO->DIR[ILI9325_DATA_PORT] |= (1 << ILI9325_DATA_MASK);
+    ILI9325_GPIO2DATA_SETOUTPUT;
 
     // Set backlight pin to output and turn it on
     LPC_GPIO->DIR[ILI9325_BL_PORT] |= (1 << ILI9325_BL_PIN);
