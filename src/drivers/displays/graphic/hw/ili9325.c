@@ -331,7 +331,7 @@ void ili9325InitDisplay(void)
     // scaled up properly
     // i hope this constant is getting calculated at compile time
     // at time of writing, it equals 51
-    for (i = 0; i < sizeof(ILI9325_InitSequence) / (2 * sizeof(ILI9325_InitSequence[0])); i++)
+    for (i = 0; i < 51; i++)
     {
         a = ILI9325_InitSequence[i * 2];
         d = ILI9325_InitSequence[i * 2 + 1];
@@ -343,7 +343,7 @@ void ili9325InitDisplay(void)
             // encoded in the init array
             // i'm not sure what the units are atm so this may require a fix,
             // the init array encodes delays in milliseconds
-            ili9325Delay(d);
+            delay(d);
         }
         else
         {
