@@ -225,10 +225,12 @@ void boardLED(uint8_t state)
   if (state)
   {
     LPC_GPIO->SET[CFG_LED_PORT] = (1 << CFG_LED_PIN);
+    lcdFillRGB(COLOR_BLUE);
   }
   else
   {
     LPC_GPIO->CLR[CFG_LED_PORT] = (1 << CFG_LED_PIN);
+    lcdFillRGB(COLOR_RED);
   }
 }
 

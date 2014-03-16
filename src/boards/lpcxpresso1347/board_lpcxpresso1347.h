@@ -514,7 +514,7 @@ extern "C" {
     CFG_TFTLCD_TS_KEYPADDELAY   The delay in milliseconds between key
                                 presses in dialogue boxes
     ----------------------------------------------------------------------*/
-    // #define CFG_TFTLCD
+    #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (1)
     #define CFG_TFTLCD_USEAAFONTS          (0)
     #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
