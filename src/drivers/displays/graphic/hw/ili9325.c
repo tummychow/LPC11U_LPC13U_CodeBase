@@ -310,7 +310,7 @@ void ili9325InitDisplay(void)
     uint8_t i, a, d;
 
     // Clear data line
-    LPC_GPIO->SET[ILI9325_DATA_PORT] &= ~ILI9325_DATA_MASK;
+    LPC_GPIO->CLR[ILI9325_DATA_PORT] |= ILI9325_DATA_MASK;
 
     SET_RD;
     SET_WR;
