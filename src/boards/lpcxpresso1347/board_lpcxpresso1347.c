@@ -184,17 +184,19 @@ void boardInit(void)
 #ifndef _TEST_
 int main(void)
 {
-  uint32_t currentSecond, lastSecond;
+  uint32_t currentSecond, lastSecond, id;
   currentSecond = lastSecond = 0;
 
   /* Configure the HW */
   boardInit();
 
+  id = lcdGetControllerID();
+
   while (1)
   {
     /* Blinky (1Hz) */
     currentSecond = delayGetSecondsActive();
-    if (currentSecond != lastSecond)
+    if (id == 0x9325 && currentSecond != lastSecond)
     {
       lastSecond = currentSecond;
       boardLED(lastSecond % 2);
