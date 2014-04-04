@@ -63,8 +63,6 @@ static lcdProperties_t ili9325Properties = { 240, // Screen width
 // this init sequence is lifted from adafruit ili9325 lib
 // i tried to add some comments, but refer to datasheet for register details
 static const uint16_t ILI9325_InitSequence[] = {
-    ILI9325_START_OSC, 0x0001, // start oscillator
-    ILI9325_INIT_DELAY, 50, // 50 millisecond delay
     // shift outputs from S720 to S1
     ILI9325_DRIV_OUT_CTRL, 0x0100,
     // turn on line inversion
@@ -72,78 +70,59 @@ static const uint16_t ILI9325_InitSequence[] = {
     // enable GRAM address increment in either dir (horizontal selected)
     // swap RGB to BGR when writing to GRAM
     ILI9325_ENTRY_MOD, 0x1030,
-    // disable resizes
-    ILI9325_RESIZE_CTRL, 0x0000,
-    // front porch = 2, back porch = 2
-    ILI9325_DISP_CTRL2, 0x0202,
+    // front porch = 3, back porch = 2
+    ILI9325_DISP_CTRL2, 0x0302,
     // configure some non-display-area drive controls
     ILI9325_DISP_CTRL3, 0x0000,
-    // FMARK settings (no idea what that means)
+    // FMARK on
     ILI9325_DISP_CTRL4, 0x0000,
-    // set up system interface to use internal clock
-    ILI9325_RGB_DISP_IF_CTRL1, 0x0000,
-    // more FMARK stuff
-    ILI9325_FRM_MARKER_POS, 0x0000,
-    // RGB interface pin polarity settings
-    ILI9325_RGB_DISP_IF_CTRL2, 0x0000,
     // initialize power control registers
     ILI9325_POW_CTRL1, 0x0000,
     ILI9325_POW_CTRL2, 0x0007,
     ILI9325_POW_CTRL3, 0x0000,
     ILI9325_POW_CTRL4, 0x0000,
-    ILI9325_INIT_DELAY, 200,
+    ILI9325_INIT_DELAY, 1000,
     // activate source driver and power supply
-    ILI9325_POW_CTRL1, 0x1690,
+    ILI9325_POW_CTRL1, 0x14B0,
+    ILI9325_INIT_DELAY, 500,
     // lower the stepup frequencies
-    ILI9325_POW_CTRL2, 0x0227,
-    ILI9325_INIT_DELAY, 50,
+    ILI9325_POW_CTRL2, 0x0007,
+    ILI9325_INIT_DELAY, 500,
     // enable VGL and set vreg1out
-    ILI9325_POW_CTRL3, 0x001A,
-    ILI9325_INIT_DELAY, 50,
+    ILI9325_POW_CTRL3, 0x008E,
     // vcom to 1.1x vreg1out
-    ILI9325_POW_CTRL4, 0x1800,
+    ILI9325_POW_CTRL4, 0x0C00,
     // vcomh to 0.895x vreg1out
-    ILI9325_POW_CTRL7, 0x002A,
-    ILI9325_INIT_DELAY, 50,
+    ILI9325_POW_CTRL7, 0x0015,
+    ILI9325_INIT_DELAY, 500,
     // set up gamma correction
     ILI9325_GAMMA_CTRL1, 0x0000,
-    ILI9325_GAMMA_CTRL2, 0x0000,
+    ILI9325_GAMMA_CTRL2, 0x0107,
     ILI9325_GAMMA_CTRL3, 0x0000,
-    ILI9325_GAMMA_CTRL4, 0x0206,
-    ILI9325_GAMMA_CTRL5, 0x0808,
-    ILI9325_GAMMA_CTRL6, 0x0007,
-    ILI9325_GAMMA_CTRL7, 0x0201,
+    ILI9325_GAMMA_CTRL4, 0x0203,
+    ILI9325_GAMMA_CTRL5, 0x0402,
+    ILI9325_GAMMA_CTRL6, 0x0000,
+    ILI9325_GAMMA_CTRL7, 0x0207,
     ILI9325_GAMMA_CTRL8, 0x0000,
-    ILI9325_GAMMA_CTRL9, 0x0000,
-    ILI9325_GAMMA_CTRL10, 0x0000,
+    ILI9325_GAMMA_CTRL9, 0x0203,
+    ILI9325_GAMMA_CTRL10, 0x0403,
     // set initial cursor positions
     ILI9325_GRAM_HOR_AD, 0x0000,
     ILI9325_GRAM_VER_AD, 0x0000,
     // set intial window positions (covers the whole screen)
     ILI9325_HOR_START_AD, 0x0000,
-    ILI9325_HOR_END_AD, 0x00EF,
+    ILI9325_HOR_END_AD, 0x00EF, // 239
     ILI9325_VER_START_AD, 0x0000,
-    ILI9325_VER_END_AD, 0x013F,
+    ILI9325_VER_END_AD, 0x013F, // 319
     // set up gate scan
     ILI9325_GATE_SCAN_CTRL1, 0xA700,
     // enable scrolling and greyscale inversion
     ILI9325_GATE_SCAN_CTRL2, 0x0003,
-    // but don't scroll any lines right now
-    ILI9325_GATE_SCAN_CTRL3, 0x0000,
     // 16 clocks per line
     ILI9325_PANEL_IF_CTRL1, 0x0010,
-    // non-overlap period of zero clocks
-    ILI9325_PANEL_IF_CTRL2, 0x0000,
-    // this register is not documented in the datasheet...
-    ILI9325_PANEL_IF_CTRL3, 0x0003,
-    // settings for when display is synced to RGB clock from RGB_DISP_IF_CTRL1 (not used, i think)
-    ILI9325_PANEL_IF_CTRL4, 0x1100,
-    // similar to the above - only used when display is synced to RGB clock
-    ILI9325_PANEL_IF_CTRL5, 0x0000,
-    // this register is also not documented
-    ILI9325_PANEL_IF_CTRL6, 0x0000,
     // enable gate drivers and turn the display on
     ILI9325_DISP_CTRL1, 0x0133,
+    ILI9325_INIT_DELAY, 500,
 };
 
 /*************************************************/
@@ -335,8 +314,7 @@ void ili9325InitDisplay(void)
     // now that we're using uint16_t, we need to make sure that the sizeof gets
     // scaled up properly
     // i hope this constant is getting calculated at compile time
-    // at time of writing, it equals 51
-    for (i = 0; i < 51; i++)
+    for (i = 0; i < sizeof(ILI9325_InitSequence) / (2 * sizeof(ILI9325_InitSequence[0])); i++)
     {
         a = ILI9325_InitSequence[i * 2];
         d = ILI9325_InitSequence[i * 2 + 1];
@@ -348,7 +326,7 @@ void ili9325InitDisplay(void)
             // encoded in the init array
             // i'm not sure what the units are atm so this may require a fix,
             // the init array encodes delays in milliseconds
-            delay(d);
+            ili9325Delay(d);
         }
         else
         {
