@@ -613,7 +613,8 @@ void lcdScroll(int16_t pixels, uint16_t fillColor)
 uint16_t lcdGetControllerID(void)
 {
     // obviously changed from hx8347g
-    return 0x9325;
+    //return 0x9325;
+    return ili9325ReadRegister(0x0000);
 }
 
 /**************************************************************************/
