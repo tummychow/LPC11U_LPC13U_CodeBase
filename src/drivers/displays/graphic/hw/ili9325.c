@@ -225,12 +225,12 @@ uint16_t ili9325ReadRegister(uint16_t command)
     // Read results
     SET_CD_RD_WR;
     CLR_RD;
-    ili9325Delay(10);
+    ili9325Delay(100);
     high = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("high: 0x%02X\r\n", high);
     SET_RD;
     CLR_RD;
-    ili9325Delay(10);
+    ili9325Delay(100);
     low = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("low: 0x%02X\r\n", low);
     SET_RD;
@@ -257,12 +257,12 @@ uint16_t ili9325ReadData(void)
     // Set pins to input
     ILI9325_GPIO2DATA_SETINPUT;
     CLR_RD;
-    ili9325Delay(10);
+    ili9325Delay(100);
     high = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("high: 0x%02X\r\n", high);
     SET_RD;
     CLR_RD;
-    ili9325Delay(10);
+    ili9325Delay(100);
     low = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
     printf("low: 0x%02X\r\n", low);
     SET_RD;
@@ -303,9 +303,9 @@ void ili9325InitDisplay(void)
 
     // Reset display
     CLR_RESET;
-    delay(10);
+    ili9325Delay(10000);
     SET_RESET;
-    delay(500);
+    ili9325Delay(500);
 
     // Send the init sequence
     // the original loop length calculation was based on an array of uint8_t
