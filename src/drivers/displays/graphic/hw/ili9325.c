@@ -87,16 +87,16 @@ void ili9325WriteRegister(uint16_t command, uint16_t data)
     SET_WR;
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
-    SET_WR;
+    SET_WR_CS;
 
     // Write data
-    SET_CD;
+    CLR_CS_SET_CD_RD_WR;
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
-    SET_WR;
+    SET_WR_CS;
 }
 
 /**************************************************************************/
@@ -113,7 +113,7 @@ void ili9325WriteCommand(const uint16_t command)
     SET_WR;
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
-    SET_WR;
+    SET_WR_CS;
 }
 
 /**************************************************************************/
@@ -125,14 +125,12 @@ void ili9325WriteData(const uint16_t data)
 {
     // Send data
     CLR_CS_SET_CD_RD_WR;
-    // This won't work since it will only set the 1 bits and leave 0's as is
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data >> 8) << ILI9325_DATA_OFFSET;
     CLR_WR;
     SET_WR;
-    // This won't work since it will only set the 1 bits and leave 0's as is
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (data & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
-    SET_WR;
+    SET_WR_CS;
 }
 
 /**************************************************************************/
@@ -152,13 +150,13 @@ uint16_t ili9325ReadRegister(uint16_t command)
     SET_WR;
     LPC_GPIO->MPIN[ILI9325_DATA_PORT] = (command & 0xFF) << ILI9325_DATA_OFFSET;
     CLR_WR;
-    SET_WR;
+    SET_WR_CS;
 
     // Set pins to input
     ILI9325_GPIO2DATA_SETINPUT;
 
     // Read results
-    SET_CD_RD_WR;
+    CLR_CS_SET_CD_RD_WR;
     CLR_RD;
     ili9325Delay(100);
     high = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
@@ -187,10 +185,11 @@ uint16_t ili9325ReadData(void)
     uint8_t high, low;
     high = low = 0;
 
-    CLR_CS_SET_CD_RD_WR;
-
     // Set pins to input
     ILI9325_GPIO2DATA_SETINPUT;
+
+    // Read results
+    CLR_CS_SET_CD_RD_WR;
     CLR_RD;
     ili9325Delay(100);
     high = LPC_GPIO->MPIN[ILI9325_DATA_PORT] >> ILI9325_DATA_OFFSET;
@@ -202,6 +201,8 @@ uint16_t ili9325ReadData(void)
     printf("low: 0x%02X\r\n", low);
     SET_RD;
     SET_CS;
+
+    // Set pins to output
     ILI9325_GPIO2DATA_SETOUTPUT;
 
     return (uint16_t)((high << 8) | (low));
@@ -229,9 +230,8 @@ void ili9325InitDisplay(void)
     // Clear data line
     LPC_GPIO->CLR[ILI9325_DATA_PORT] |= ILI9325_DATA_MASK;
 
+    SET_WR_CS;
     SET_RD;
-    SET_WR;
-    SET_CS;
     SET_CD;
 
     // Reset display
