@@ -60,71 +60,6 @@ static lcdProperties_t ili9325Properties = { 240, // Screen width
                                              true, // Driver includes fast horizontal line function?
                                              true }; // Driver includes fast vertical line function?
 
-// this init sequence is lifted from adafruit ili9325 lib
-// i tried to add some comments, but refer to datasheet for register details
-static const uint16_t ILI9325_InitSequence[] = {
-    // shift outputs from S720 to S1
-    ILI9325_DRIV_OUT_CTRL, 0x0100,
-    // turn on line inversion
-    ILI9325_DRIV_WAV_CTRL, 0x0700,
-    // enable GRAM address increment in either dir (horizontal selected)
-    // swap RGB to BGR when writing to GRAM
-    ILI9325_ENTRY_MOD, 0x1030,
-    // front porch = 3, back porch = 2
-    ILI9325_DISP_CTRL2, 0x0302,
-    // configure some non-display-area drive controls
-    ILI9325_DISP_CTRL3, 0x0000,
-    // FMARK on
-    ILI9325_DISP_CTRL4, 0x0000,
-    // initialize power control registers
-    ILI9325_POW_CTRL1, 0x0000,
-    ILI9325_POW_CTRL2, 0x0007,
-    ILI9325_POW_CTRL3, 0x0000,
-    ILI9325_POW_CTRL4, 0x0000,
-    ILI9325_INIT_DELAY, 1000,
-    // activate source driver and power supply
-    ILI9325_POW_CTRL1, 0x14B0,
-    ILI9325_INIT_DELAY, 500,
-    // lower the stepup frequencies
-    ILI9325_POW_CTRL2, 0x0007,
-    ILI9325_INIT_DELAY, 500,
-    // enable VGL and set vreg1out
-    ILI9325_POW_CTRL3, 0x008E,
-    // vcom to 1.1x vreg1out
-    ILI9325_POW_CTRL4, 0x0C00,
-    // vcomh to 0.895x vreg1out
-    ILI9325_POW_CTRL7, 0x0015,
-    ILI9325_INIT_DELAY, 500,
-    // set up gamma correction
-    ILI9325_GAMMA_CTRL1, 0x0000,
-    ILI9325_GAMMA_CTRL2, 0x0107,
-    ILI9325_GAMMA_CTRL3, 0x0000,
-    ILI9325_GAMMA_CTRL4, 0x0203,
-    ILI9325_GAMMA_CTRL5, 0x0402,
-    ILI9325_GAMMA_CTRL6, 0x0000,
-    ILI9325_GAMMA_CTRL7, 0x0207,
-    ILI9325_GAMMA_CTRL8, 0x0000,
-    ILI9325_GAMMA_CTRL9, 0x0203,
-    ILI9325_GAMMA_CTRL10, 0x0403,
-    // set initial cursor positions
-    ILI9325_GRAM_HOR_AD, 0x0000,
-    ILI9325_GRAM_VER_AD, 0x0000,
-    // set intial window positions (covers the whole screen)
-    ILI9325_HOR_START_AD, 0x0000,
-    ILI9325_HOR_END_AD, 0x00EF, // 239
-    ILI9325_VER_START_AD, 0x0000,
-    ILI9325_VER_END_AD, 0x013F, // 319
-    // set up gate scan
-    ILI9325_GATE_SCAN_CTRL1, 0xA700,
-    // enable scrolling and greyscale inversion
-    ILI9325_GATE_SCAN_CTRL2, 0x0003,
-    // 16 clocks per line
-    ILI9325_PANEL_IF_CTRL1, 0x0010,
-    // enable gate drivers and turn the display on
-    ILI9325_DISP_CTRL1, 0x0133,
-    ILI9325_INIT_DELAY, 500,
-};
-
 /*************************************************/
 /* Private Methods                               */
 /*************************************************/
@@ -291,8 +226,6 @@ void ili9325SetCursor(const uint16_t x, const uint16_t y)
 /**************************************************************************/
 void ili9325InitDisplay(void)
 {
-    uint8_t i, a, d;
-
     // Clear data line
     LPC_GPIO->CLR[ILI9325_DATA_PORT] |= ILI9325_DATA_MASK;
 
@@ -307,32 +240,69 @@ void ili9325InitDisplay(void)
     SET_RESET;
     ili9325Delay(500);
 
-    // Send the init sequence
-    // the original loop length calculation was based on an array of uint8_t
-    // so sizeof the first element is 1 byte and you can divide by 2 to get half
-    // the elements, as needed
-    // now that we're using uint16_t, we need to make sure that the sizeof gets
-    // scaled up properly
-    // i hope this constant is getting calculated at compile time
-    for (i = 0; i < sizeof(ILI9325_InitSequence) / (2 * sizeof(ILI9325_InitSequence[0])); i++)
-    {
-        a = ILI9325_InitSequence[i * 2];
-        d = ILI9325_InitSequence[i * 2 + 1];
-
-        if (a == ILI9325_INIT_DELAY)
-        {
-            // the hx8347g code would choose to always delay for 1000 "units"
-            // for now, i've set the delay to be proportional to the # of units
-            // encoded in the init array
-            // i'm not sure what the units are atm so this may require a fix,
-            // the init array encodes delays in milliseconds
-            ili9325Delay(d);
-        }
-        else
-        {
-            ili9325WriteRegister(a, d);
-        }
-    }
+    // Send the init sequence (from LPC1343 codebase)
+    // shift outputs from S720 to S1
+    ili9325WriteRegister(ILI9325_DRIV_OUT_CTRL, 0x0100);
+    // turn on line inversion
+    ili9325WriteRegister(ILI9325_DRIV_WAV_CTRL, 0x0700);
+    // enable GRAM address increment in either dir (horizontal selected)
+    // swap RGB to BGR when writing to GRAM
+    ili9325WriteRegister(ILI9325_ENTRY_MOD, 0x1030);
+    // front porch = 3, back porch = 2
+    ili9325WriteRegister(ILI9325_DISP_CTRL2, 0x0302);
+    // configure some non-display-area drive controls
+    ili9325WriteRegister(ILI9325_DISP_CTRL3, 0x0000);
+    // FMARK on
+    ili9325WriteRegister(ILI9325_DISP_CTRL4, 0x0000);
+    // initialize power control registers
+    ili9325WriteRegister(ILI9325_POW_CTRL1, 0x0000);
+    ili9325WriteRegister(ILI9325_POW_CTRL2, 0x0007);
+    ili9325WriteRegister(ILI9325_POW_CTRL3, 0x0000);
+    ili9325WriteRegister(ILI9325_POW_CTRL4, 0x0000);
+    ili9325Delay(1000);
+    // activate source driver and power supply
+    ili9325WriteRegister(ILI9325_POW_CTRL1, 0x14B0);
+    ili9325Delay(500);
+    // lower the stepup frequencies
+    ili9325WriteRegister(ILI9325_POW_CTRL2, 0x0007);
+    ili9325Delay(500);
+    // enable VGL and set vreg1out
+    ili9325WriteRegister(ILI9325_POW_CTRL3, 0x008E);
+    // vcom to 1.1x vreg1out
+    ili9325WriteRegister(ILI9325_POW_CTRL4, 0x0C00);
+    // vcomh to 0.895x vreg1out
+    ili9325WriteRegister(ILI9325_POW_CTRL7, 0x0015);
+    ili9325Delay(500);
+    // set up gamma correction
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL1, 0x0000);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL2, 0x0107);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL3, 0x0000);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL4, 0x0203);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL5, 0x0402);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL6, 0x0000);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL7, 0x0207);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL8, 0x0000);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL9, 0x0203);
+    ili9325WriteRegister(ILI9325_GAMMA_CTRL10, 0x0403);
+    // set initial cursor positions
+    ili9325WriteRegister(ILI9325_GRAM_HOR_AD, 0x0000);
+    ili9325WriteRegister(ILI9325_GRAM_VER_AD, 0x0000);
+    // set intial window positions (covers the whole screen)
+    ili9325WriteRegister(ILI9325_HOR_START_AD, 0x0000);
+    // 239
+    ili9325WriteRegister(ILI9325_HOR_END_AD, 0x00EF);
+    ili9325WriteRegister(ILI9325_VER_START_AD, 0x0000);
+    // 319
+    ili9325WriteRegister(ILI9325_VER_END_AD, 0x013F);
+    // set up gate scan
+    ili9325WriteRegister(ILI9325_GATE_SCAN_CTRL1, 0xA700);
+    // enable scrolling and greyscale inversion
+    ili9325WriteRegister(ILI9325_GATE_SCAN_CTRL2, 0x0003);
+    // 16 clocks per line
+    ili9325WriteRegister(ILI9325_PANEL_IF_CTRL1, 0x0010);
+    // enable gate drivers and turn the display on
+    ili9325WriteRegister(ILI9325_DISP_CTRL1, 0x0133);
+    ili9325Delay(500);
 }
 
 /**************************************************************************/
