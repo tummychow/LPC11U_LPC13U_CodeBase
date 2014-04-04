@@ -99,10 +99,10 @@ extern "C" {
 #define SET_WR                        do { LPC_GPIO->SET[ILI9325_CONTROL_PORT] = (1 << ILI9325_WR_PIN); } while(0)
 #define CLR_RD                        do { LPC_GPIO->CLR[ILI9325_CONTROL_PORT] = (1 << ILI9325_RD_PIN); } while(0)
 #define SET_RD                        do { LPC_GPIO->SET[ILI9325_CONTROL_PORT] = (1 << ILI9325_RD_PIN); } while(0)
-#define CLR_RESET                     do { LPC_GPIO->CLR[ILI9325_RES_PORT] = (1 << ILI9325_RES_PORT); } while(0)
-#define SET_RESET                     do { LPC_GPIO->SET[ILI9325_RES_PORT] = (1 << ILI9325_RES_PORT); } while(0)
-#define CLR_BL                        do { LPC_GPIO->CLR[ILI9325_BL_PORT] = (1 << ILI9325_BL_PORT); } while(0)
-#define SET_BL                        do { LPC_GPIO->SET[ILI9325_BL_PORT] = (1 << ILI9325_BL_PORT); } while(0)
+#define CLR_RESET                     do { LPC_GPIO->CLR[ILI9325_RES_PORT] = (1 << ILI9325_RES_PIN); } while(0)
+#define SET_RESET                     do { LPC_GPIO->SET[ILI9325_RES_PORT] = (1 << ILI9325_RES_PIN); } while(0)
+#define CLR_BL                        do { LPC_GPIO->CLR[ILI9325_BL_PORT] = (1 << ILI9325_BL_PIN); } while(0)
+#define SET_BL                        do { LPC_GPIO->SET[ILI9325_BL_PORT] = (1 << ILI9325_BL_PIN); } while(0)
 
 // These 'combined' macros are defined to improve code performance by
 // reducing the number of instructions in heavily used functions
